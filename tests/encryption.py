@@ -3,6 +3,7 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 import os
+import base64
 
 def hash():
     pass
@@ -10,7 +11,7 @@ def hash():
 def key_derivation_function(password, salt):
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
-        length=256,
+        length=32,
         salt=salt,
         iterations=600000,
     )
@@ -53,6 +54,7 @@ master_password = b"password"
 email = b"email@gmail.com"
 master_key = key_derivation_function(master_password,email)
 print("derived key is: ",master_key)
+print(str(base64.b64encode(master_key)),'utf-8')
 print("-"*15)
 master_password_hash= key_derivation_function(master_key, master_password)
 print("master password hash is: ",master_password_hash)
