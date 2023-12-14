@@ -2,6 +2,8 @@ import sys
 import server.server as server
 from client.encryption import get_hashed_user
 
+from utils.utils import check_email_valid
+
 def welcome():
   print("Welcome to the password manager.")
   print("Do you want to register or to log in?")
@@ -10,12 +12,7 @@ def welcome():
   while not decision in ("r", "l", "e"):
     print("Unknown command.")
     decision = str(input(msg)).lower()
-  if decision == "r":
-    register()
-  if decision == "l":
-    login()
-  else:
-    sys.exit(0)
+  return decision
 
 def register():
   print("Register option checked.")
@@ -28,3 +25,12 @@ def register():
 
 def login():
   print("Login option checked.")
+  email = str(input("Please enter your email: ")).lower().strip()
+  while not check_email_valid(email):
+    email = str(input("Please enter your email: ")).lower().strip()
+  password = str(input("Please enter a password: ")) # todo check strong password
+  return email, password
+
+def main_menu():
+  print("You are in the main menu.")
+  pass

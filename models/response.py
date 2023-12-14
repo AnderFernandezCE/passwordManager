@@ -1,6 +1,10 @@
 from abc import ABC, abstractmethod
 
 class Response(ABC):
+  
+  def __init__(self, message=None):
+    self.message= message
+
   @abstractmethod
   def get_message(self):
     pass
@@ -24,3 +28,7 @@ class OkResponse(Response):
 class ServerError(Response):
   def get_message(self):
     return "Server has encountered an error"
+  
+class LoginResponse(Response):
+  def get_message(self):
+    return self.message

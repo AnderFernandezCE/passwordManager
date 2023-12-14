@@ -2,3 +2,4 @@
 *__pycache__
 server/db
 server/users.txt
+server/todo
