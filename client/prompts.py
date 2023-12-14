@@ -17,11 +17,10 @@ def welcome():
 def register():
   print("Register option checked.")
   email = str(input("Please enter your email: ")).lower().strip()
+  while not check_email_valid(email):
+    email = str(input("Please enter your email: ")).lower().strip()
   password = str(input("Please enter a password: "))
-  hashed_user = get_hashed_user(email.encode(), password.encode())
-  print(hashed_user.decode())
-  response = server.register(email, hashed_user)
-  print(response)
+  return email, password
 
 def login():
   print("Login option checked.")

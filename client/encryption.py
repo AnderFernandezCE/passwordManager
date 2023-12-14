@@ -1,6 +1,7 @@
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.hazmat.primitives import hashes
-
+from cryptography.hazmat.primitives import hashes, hmac
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+import os
 import base64
 
 def get_hashed_user(email,password):
@@ -24,6 +25,27 @@ def get_master_key(email,password):
 def get_sym_key(response):
   return b64_to_bin(response.get_message())
 
+def generate_symmetric_key():
+  skey = os.urandom(32)
+  h = hmac.HMAC(skey, hashes.SHA256())
+  h.update(skey)
+  smac = h.finalize()
+  return skey, smac
+
+def get_protected_key(sym_key, master_key, iv):
+  protected_key = aes_encryption(sym_key, iv, master_key)
+  return bin_to_b64(protected_key)
+
+def generate_iv():
+  return os.urandom(16)
+
+def aes_encryption(payload, iv, key):
+  cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
+  encryptor = cipher.encryptor()
+  ct = encryptor.update(payload) + encryptor.finalize()
+  return ct
+
+  
 def key_derivation_function(password, salt):
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
@@ -39,7 +61,3 @@ def bin_to_b64(data):
 
 def b64_to_bin(data):
   return  base64.b64decode(data)
-
-# server =  Server()
-# # response = server.register("email@gmail.com",bin_to_b64(hash_master_key),bin_to_b64(os.urandom(32)))  -- IT WORKS, will do in client
-# # print(response.get_message())

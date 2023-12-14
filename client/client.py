@@ -1,7 +1,7 @@
 import client.prompts as prompts
 import client.encryption as encryption
 import sys
-from models.response import LoginResponse
+from models.response import LoginResponse, OkResponse
 
 class Client():
 
@@ -41,7 +41,23 @@ class Client():
     pass
 
   def register(self):
-    pass
+    email, password = prompts.register()
+    hash_master_key = encryption.get_hashed_user(email,password)
+    master_key = encryption.get_master_key(email,password)
+    skey, smac = encryption.generate_symmetric_key()
+    fskey = skey + smac
+    iv = encryption.generate_iv() # need to store in users
+    protected_key = encryption.get_protected_key(fskey, master_key, iv)
+    response = self.server.register(email, hash_master_key, protected_key)
+    if isinstance(response, OkResponse):
+      self.sym_key = fskey
+      self.master_key = master_key
+      self.email = email
+      print("Login succesfully.")
+      prompts.main_menu()
+    else:
+      print(response.get_message())
+      self.start()
 
   def new_item(self):
     pass
