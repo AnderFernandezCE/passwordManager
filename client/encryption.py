@@ -22,8 +22,12 @@ def get_master_key(email,password):
   del password_bytes
   return master_key
   
-def get_sym_key(response):
+def get_protected_sym_key(response):
   return b64_to_bin(response.get_message())
+
+def decrypt_protected_sym_key(protected_key, master_key, iv):
+  fskey = aes_decryption(protected_key, iv, master_key)
+  return fskey
 
 def generate_symmetric_key():
   skey = os.urandom(32)
@@ -39,12 +43,25 @@ def get_protected_key(sym_key, master_key, iv):
 def generate_iv():
   return os.urandom(16)
 
+def aes_decryption(payload,iv, key):
+  cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
+  decryptor = cipher.decryptor()
+  ct = decryptor.update(payload) + decryptor.finalize()
+  return ct
+
 def aes_encryption(payload, iv, key):
   cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
   encryptor = cipher.encryptor()
   ct = encryptor.update(payload) + encryptor.finalize()
   return ct
 
+def check_correct_sym_key(sym_key: bytes):
+  skey = sym_key[:32]
+  smac = sym_key[32:]
+  h = hmac.HMAC(skey, hashes.SHA256())
+  h.update(skey)
+  smac_received = h.finalize()
+  return smac_received == smac
   
 def key_derivation_function(password, salt):
     kdf = PBKDF2HMAC(

@@ -4,3 +4,4 @@ server/db
 server/users.txt
 server/todo
 client/todo
+client/users
