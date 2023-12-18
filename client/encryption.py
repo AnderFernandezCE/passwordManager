@@ -1,6 +1,7 @@
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes, hmac
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import padding
 import os
 import base64
 
@@ -42,6 +43,19 @@ def get_protected_key(sym_key, master_key, iv):
 
 def generate_iv():
   return os.urandom(16)
+
+def vault_decrypt(payload, iv, key):
+  data_bytes = b64_to_bin(payload)
+  decrypted_data = aes_decryption(data_bytes, iv, key)
+  padder = padding.PKCS7(128).unpadder()
+  padded_data = padder.update(decrypted_data) + padder.finalize()
+  return padded_data.decode('UTF-8')
+
+def vault_encrypt(payload, iv, key):
+  padder = padding.PKCS7(128).padder()
+  payload_bytes = payload.encode('UTF-8')
+  padded_data = padder.update(payload_bytes) + padder.finalize()
+  return bin_to_b64(aes_encryption(padded_data, iv, key))
 
 def aes_decryption(payload,iv, key):
   cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
