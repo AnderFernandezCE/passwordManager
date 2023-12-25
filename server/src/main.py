@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from src.config import app_configs, settings
-
+from src.paths import KEYFILE,CERTFILE
 
 app = FastAPI(**app_configs)
 
@@ -24,5 +24,5 @@ async def healthcheck() -> dict[str, str]:
     return {"status": "ok"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host=settings.SITE_DOMAIN, port=settings.SITE_PORT)
+    uvicorn.run(app, host=settings.SITE_DOMAIN, port=settings.SITE_PORT, ssl_keyfile=KEYFILE, ssl_certfile=CERTFILE)
     
