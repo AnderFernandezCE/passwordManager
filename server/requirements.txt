@@ -1,0 +1,5 @@
+cryptography
+fastapi
+uvicorn
+pydantic_settings
+SQLalchemy
