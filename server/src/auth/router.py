@@ -12,13 +12,13 @@ async def fetch_memories() -> dict[str, str]:
     return {"auth" :  "router"}
 
 @router.post("/login", status_code=status.HTTP_200_OK)
-async def fetch_memories() -> dict[str, str]:
+async def login() -> dict[str, str]:
     return {"auth" :  "login"}
 
 @router.post("/register", status_code=status.HTTP_201_CREATED, response_model=RegisterResponse)
-async def fetch_memories(user_request : RegisterRequest  = Depends(valid_register_user)) -> RegisterResponse:
-    services.register(user_request) # todo
-    return RegisterResponse(status=user_request)
+async def register(user_request : RegisterRequest  = Depends(valid_register_user)) -> RegisterResponse:
+    # services.register(user_request) # todo
+    return RegisterResponse(**user_request.user.dict())
 
 # TOKENS/SESSIONS REFRESH
     

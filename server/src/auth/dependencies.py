@@ -3,17 +3,10 @@ from src.auth import services
 from src.auth.schemas import RegisterRequest
 from src.auth.exceptions import UserExists
 
-async def valid_register_user(user_request: RegisterRequest) -> bool:
+async def valid_register_user(user_request: RegisterRequest) -> RegisterRequest:
   #check email exists
-  if await user_exists(user_request.user.email):
+  if await services.user_exists(user_request.user.email):
     raise UserExists()
   #check email valid? NO IN THE SCHEMA
-  #check
-
-async def user_exists(user_request: RegisterRequest) -> bool:
-  user =  await services.user_exists(user_request.user.email)
-  if user:
-      # raise UserExists()
-      return True
-
-  return False
+  #check anything more?
+  return user_request

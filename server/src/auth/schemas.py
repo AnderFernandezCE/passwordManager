@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from datetime import date
 from typing import Optional, List
 from enum import Enum
@@ -7,7 +7,7 @@ from enum import Enum
     
 class UserRequest(BaseModel):
   username : str
-  email : str
+  email : EmailStr
   hash_master_password : str
   key : str
   
@@ -15,4 +15,7 @@ class RegisterRequest(BaseModel):
   user : UserRequest
 
 class RegisterResponse(BaseModel):
-  status : bool
+  username : str
+  email : EmailStr
+  hash_master_password : str
+  key : str

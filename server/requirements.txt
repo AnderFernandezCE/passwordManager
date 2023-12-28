@@ -2,5 +2,6 @@ cryptography
 fastapi
 uvicorn
 pydantic_settings
+pydantic[email]
 SQLalchemy
 aiomysql
