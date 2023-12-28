@@ -50,5 +50,10 @@ async def fetch_all(select_query: Select | Insert | Update) -> list[dict[str, An
     
 async def fetch_one(select_query: Select | Insert | Update) -> dict[str, Any] | None:
   async with get_session() as session:
-      result: CursorResult = await session.execute(select_query)
-      return result.scalars().first()
+    result: CursorResult = await session.execute(select_query)
+    return result.scalars().first()
+
+async def insert_one(select_query: Insert ) ->  None:
+  async with get_session() as session:
+    await session.execute(select_query)
+    await session.commit()

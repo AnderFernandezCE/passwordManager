@@ -17,8 +17,8 @@ async def login() -> dict[str, str]:
 
 @router.post("/register", status_code=status.HTTP_201_CREATED, response_model=RegisterResponse)
 async def register(user_request : RegisterRequest  = Depends(valid_register_user)) -> RegisterResponse:
-    # services.register(user_request) # todo
-    return RegisterResponse(**user_request.user.dict())
+    response = await services.register_user(user_request.user)
+    return RegisterResponse(**user_request.user.dict()) #return full user data(public key ... )
 
 # TOKENS/SESSIONS REFRESH
     
