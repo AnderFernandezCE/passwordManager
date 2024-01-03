@@ -7,20 +7,21 @@ authmanager = AuthDBmanager()
 async def user_exists(email):
   return await authmanager.user_exists(email)
 
+
+############# REGISTER FUNCTIONS ####################
 async def register_user(user: UserRequest):
-  user = complete_user_data(user)
+  user:UserEntity = complete_user_data(user)
   return await authmanager.register_user(user)
 
-def complete_user_data(user: UserRequest):
-  new_user = format_register_user(user)
-  #todo - fulfill user data with publickey - privateKey - salt...
-  #step 1 generate salt
-  print(new_user)
-  new_user = add_salt_register_user(new_user)
-  print(new_user)
+def complete_user_data(user: UserRequest) -> UserEntity: 
+  """Fulfills user data with publickey - privateKey - salt..."""
+  user_formated = format_register_user(user)
+  
+  #step 1 generate salt and 
+  user_formated = add_salt_register_user(user_formated)
   #step 2 kdf - new hash master password 
-  new_user = update_userhash_register_user(new_user, user.hash_master_password )
-  return UserEntity(**new_user)
+  user_formated = update_userhash_register_user(user_formated, user.hash_master_password )
+  return UserEntity(**user_formated)
 
 def format_register_user(user: UserRequest):
   new_user = user.dict()
@@ -33,6 +34,8 @@ def add_salt_register_user(user: UserEntity):
   return user
 
 def update_userhash_register_user(user: UserEntity, old_hash):
-  new_userhash = encryptionmanager.derive_userhash(old_hash, user.salt)
+  new_userhash = encryptionmanager.derive_userhash(old_hash, user['salt'])
   user['userhash'] = new_userhash
   return user
+
+############# LOGIN FUNCTIONS ####################
