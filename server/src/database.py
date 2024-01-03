@@ -35,18 +35,18 @@ db = async_sessionmaker(engine, expire_on_commit=False)
 async def get_session():
   session = db()
   try:
-      yield session
+    yield session
   except DatabaseError as e:
-      print(e)
-      await session.rollback()
-      raise DatabaseDown()
+    print(e)
+    await session.rollback()
+    raise DatabaseDown()
   finally:
-      await session.close()
+    await session.close()
 
 async def fetch_all(select_query: Select | Insert | Update) -> list[dict[str, Any]]:
   async with get_session() as session:
-      result: CursorResult = await session.execute(select_query)
-      return result.scalars().all()
+    result: CursorResult = await session.execute(select_query)
+    return result.scalars().all()
     
 async def fetch_one(select_query: Select | Insert | Update) -> dict[str, Any] | None:
   async with get_session() as session:

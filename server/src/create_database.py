@@ -12,6 +12,8 @@ from src.models import get_Base
 def main():
     try:
         dsn = str(settings.DATABASE_URL)
+        dsn = dsn.replace('+aiomysql', '', 1)
+        print(dsn)
         engine = create_engine(dsn, echo = True)
         Base = get_Base()
         Base.metadata.create_all(engine)

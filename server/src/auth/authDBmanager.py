@@ -1,7 +1,7 @@
 from src.database import fetch_one, insert_one
 from sqlalchemy import select, insert
-from sqlalchemy import UUID
 from src.models import Users
+from src.auth.schemas import UserEntity
 
 class AuthDBmanager():
   def __init__(self) -> None:
@@ -13,9 +13,17 @@ class AuthDBmanager():
       return True
     return False
   
-  async def register_user(self, user):
+  async def register_user(self, user:UserEntity):
     try:
-      inserted = await insert_one(insert(Users).values(UUID=UUID(as_uuid=True), username=user.username, email = user.email, userhash=user.hash_master_password, key=user.key))
+      await insert_one(insert(Users).values(
+        username=user.username, 
+        email = user.email, 
+        userhash=user.userhash, 
+        key=user.key, 
+        publicKey="",
+        salt= user.salt
+        )
+      )
       return True
     except Exception as e:
       print(e)
