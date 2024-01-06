@@ -3,12 +3,16 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (
     Integer, String, Date, DateTime, Float, Boolean, Text, BOOLEAN, Unicode, UUID, LargeBinary, CHAR)
 import uuid
-from datetime import datetime
+import datetime
 
 Base = declarative_base()
 
 def generate_uuid():
     return str(uuid.uuid4())
+
+def get_verification_token_expiration_time():
+    return datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+
 
 class Users(Base):
     __tablename__ = "users"
@@ -20,9 +24,11 @@ class Users(Base):
     key = Column('key', Unicode(128))
     publicKey = Column('publicKey', String(4000)) # not null
     privateKey = Column('privateKey', String(4000)) # not null
-    created_at = Column('created_at', DateTime, default=datetime.utcnow)
+    created_at = Column('created_at', DateTime, default=datetime.datetime.utcnow)
     salt = Column('salt', LargeBinary(32))
     verified =Column('verified', Boolean, default= False)
+    verification_token = Column('verification_token', CHAR(36), default=generate_uuid)
+    expires_at = Column('expires_at', DateTime, default=get_verification_token_expiration_time)
     
 
 # class Link(Base):
