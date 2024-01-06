@@ -57,3 +57,9 @@ async def insert_one(select_query: Insert ) ->  None:
   async with get_session() as session:
     await session.execute(select_query)
     await session.commit()
+
+async def fetch_one_columns(select_query: Select | Insert | Update):
+    async with get_session() as session:
+        result = await session.execute(select_query)
+        return result.first()
+    

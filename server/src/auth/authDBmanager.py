@@ -1,4 +1,4 @@
-from src.database import fetch_one, insert_one
+from src.database import fetch_one,fetch_one_columns, insert_one
 from sqlalchemy import select, insert
 from src.models import Users
 from src.auth.schemas import UserEntity
@@ -26,5 +26,14 @@ class AuthDBmanager():
       )
       return True
     except Exception as e:
+      raise e
+    
+  async def get_verification_token(self, email):
+    try:
+      token = await fetch_one_columns(select(
+        Users.verification_token,
+        Users.expires_at).where(Users.email == email))
+      return token
+    except Exception as e:
       print(e)
-      return False
+      raise e
