@@ -1,5 +1,6 @@
 from src.auth.authDBmanager import AuthDBmanager
 from src.auth import encryptionmanager
+import src.auth.verification_token as verification_token
 from src.auth.schemas import RegisterRequest, UserRequest, UserEntity
 
 authmanager = AuthDBmanager()
@@ -10,18 +11,27 @@ async def user_exists(email):
 
 ############# REGISTER FUNCTIONS ####################
 async def register_user(user: UserRequest):
-  user:UserEntity = complete_user_data(user)
-  return await authmanager.register_user(user)
+  try:
+    #format user
+    user:UserEntity = complete_user_data(user)
+    #insert user in db
+    await authmanager.register_user(user)
+    # send verification token to email
+    await verification_token.send_verification_token(user.email)
+    return #new user registered response
+  except Exception as e:
+    print(e)
+    raise e
 
 def complete_user_data(user: UserRequest) -> UserEntity: 
   """Fulfills user data with publickey - privateKey - salt..."""
-  user_formated = format_register_user(user)
+  user_formatted = format_register_user(user)
   
-  #step 1 generate salt and 
-  user_formated = add_salt_register_user(user_formated)
+  #step 1 generate salt 
+  user_formatted = add_salt_register_user(user_formatted)
   #step 2 kdf - new hash master password 
-  user_formated = update_userhash_register_user(user_formated, user.hash_master_password )
-  return UserEntity(**user_formated)
+  user_formatted = update_userhash_register_user(user_formatted, user.hash_master_password )
+  return UserEntity(**user_formatted)
 
 def format_register_user(user: UserRequest):
   new_user = user.dict()

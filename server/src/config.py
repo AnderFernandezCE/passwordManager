@@ -17,6 +17,7 @@ class AppSettings(BaseSettings):
 
     ENVIRONMENT: Environment = Environment.PRODUCTION
 
+    RESEND_API: str
     #SENTRY_DSN: str | None = None
 
     CORS_ORIGINS: list[str]
