@@ -21,6 +21,10 @@ class Conflict(DetailedHTTPException):
     STATUS_CODE = status.HTTP_409_CONFLICT
     DETAIL = "Conflict"
 
+class Gone(DetailedHTTPException):
+    STATUS_CODE = status.HTTP_410_GONE
+    DETAIL = "Expired"
+
 class ServerError(DetailedHTTPException):
     STATUS_CODE = status.HTTP_500_INTERNAL_SERVER_ERROR
     DETAIL = "Server internal error"

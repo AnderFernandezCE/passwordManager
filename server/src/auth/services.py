@@ -5,8 +5,8 @@ from src.auth.schemas import RegisterRequest, UserRequest, UserEntity
 
 authmanager = AuthDBmanager()
 
-async def user_exists(email):
-  return await authmanager.user_exists(email)
+async def get_user_by_email(email):
+  return await authmanager.get_user_by_email(email)
 
 
 ############# REGISTER FUNCTIONS ####################
@@ -49,3 +49,7 @@ def update_userhash_register_user(user: UserEntity, old_hash):
   return user
 
 ############# LOGIN FUNCTIONS ####################
+
+############# ACCOUNT VERIFICATION TOKEN FUNCTIONS ####################
+async def verificate_user_account(uuid):
+  await authmanager.verificate_user_account(uuid)

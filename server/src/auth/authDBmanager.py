@@ -1,5 +1,5 @@
-from src.database import fetch_one,fetch_one_columns, insert_one
-from sqlalchemy import select, insert
+from src.database import fetch_one,fetch_one_columns, insert_update_one
+from sqlalchemy import select, insert, update
 from src.models import Users
 from src.auth.schemas import UserEntity
 
@@ -13,9 +13,12 @@ class AuthDBmanager():
       return True
     return False
   
-  async def register_user(self, user:UserEntity):
+  async def get_user_by_email(self, email) -> Users:
+    return await fetch_one(select(Users).where(Users.email == email))
+  
+  async def register_user(self, user:UserEntity) -> None:
     try:
-      await insert_one(insert(Users).values(
+      await insert_update_one(insert(Users).values(
         username=user.username, 
         email = user.email, 
         userhash=user.userhash, 
@@ -28,12 +31,33 @@ class AuthDBmanager():
     except Exception as e:
       raise e
     
-  async def get_verification_token(self, email):
+  async def get_verification_token_by_email(self, email):
     try:
       token = await fetch_one_columns(select(
+        Users.email,
         Users.verification_token,
-        Users.expires_at).where(Users.email == email))
+        Users.expires_at,
+        Users.verified).where(Users.email == email))
       return token
+    except Exception as e:
+      print(e)
+      raise e
+    
+  async def get_verification_token_by_token(self, token):
+    try:
+      token = await fetch_one_columns(select(
+        Users.email,
+        Users.verification_token,
+        Users.expires_at,
+        Users.verified).where(Users.verification_token == token))
+      return token
+    except Exception as e:
+      print(e)
+      raise e
+    
+  async def verificate_user_account(self, uuid):
+    try:
+      await insert_update_one(update(Users).where(Users.UUID == uuid).values(verified=True))
     except Exception as e:
       print(e)
       raise e
