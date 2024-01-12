@@ -18,6 +18,7 @@ from sqlalchemy import (
   String,
   Table,
   Update,
+  Delete,
   func,
 )
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
@@ -53,7 +54,7 @@ async def fetch_one(select_query: Select | Insert | Update) -> dict[str, Any] | 
     result: CursorResult = await session.execute(select_query)
     return result.scalars().first()
 
-async def insert_update_one(select_query: Insert | Update) ->  None:
+async def insert_update_delete_one(select_query: Insert | Update | Delete) ->  None:
   async with get_session() as session:
     await session.execute(select_query)
     await session.commit()

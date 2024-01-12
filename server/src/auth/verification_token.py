@@ -14,7 +14,7 @@ async def get_verificationtoken_by_token(token):
 async def send_verification_token(email):
   token = await get_verificationtoken_by_email(email)
   if token is not None:
-    send_verification_mail("anderfernandez156@gmail.com" , token.verification_token)
+    send_verification_mail(email , token.verification_token)
 
 # async def verificate_token():
 #   pass

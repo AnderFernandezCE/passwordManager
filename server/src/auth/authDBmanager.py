@@ -1,5 +1,5 @@
-from src.database import fetch_one,fetch_one_columns, insert_update_one
-from sqlalchemy import select, insert, update
+from src.database import fetch_one,fetch_one_columns, insert_update_delete_one
+from sqlalchemy import select, insert, update, delete
 from src.models import Users
 from src.auth.schemas import UserEntity
 
@@ -18,7 +18,7 @@ class AuthDBmanager():
   
   async def register_user(self, user:UserEntity) -> None:
     try:
-      await insert_update_one(insert(Users).values(
+      await insert_update_delete_one(insert(Users).values(
         username=user.username, 
         email = user.email, 
         userhash=user.userhash, 
@@ -26,6 +26,14 @@ class AuthDBmanager():
         publicKey="",
         salt= user.salt
         )
+      )
+      return True
+    except Exception as e:
+      raise e
+  
+  async def unregister_user(self, user:UserEntity) -> None:
+    try:
+      await insert_update_delete_one(delete(Users).where(Users.email == user.email)
       )
       return True
     except Exception as e:
@@ -57,7 +65,7 @@ class AuthDBmanager():
     
   async def verificate_user_account(self, uuid):
     try:
-      await insert_update_one(update(Users).where(Users.UUID == uuid).values(verified=True))
+      await insert_update_delete_one(update(Users).where(Users.UUID == uuid).values(verified=True))
     except Exception as e:
       print(e)
       raise e
