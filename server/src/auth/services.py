@@ -3,6 +3,7 @@ from src.auth import encryptionmanager
 from src.auth import usermanager
 import src.auth.verification_token as verification_token
 from src.auth.schemas import RegisterRequest, UserRequest, UserEntity
+from src.exceptions import ServerError
 
 authmanager = AuthDBmanager()
 
@@ -29,7 +30,7 @@ async def register_user(user: UserRequest):
     if user_registered:
       # Rollback user registration
       await authmanager.unregister_user(user)
-    raise e
+    raise ServerError()
 
 ############# LOGIN FUNCTIONS ####################
 
