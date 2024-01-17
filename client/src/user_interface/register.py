@@ -1,6 +1,7 @@
 import tkinter as tk
 from src.user_interface.basemodel import Page
-from src.encryption import encryptionservice     
+from src.encryption import encryptionservice
+from src.utils import validation
 
 class RegisterInterface(Page):
     def __init__(self, *args, **kwargs):
@@ -34,7 +35,10 @@ class RegisterInterface(Page):
         self.confirmpasswordentry = tk.Entry(self, show="*",width=30)
         self.confirmpasswordentry.pack( anchor="center")
 
-        registerbutton = tk.Button(self, text="Register", command=self.register_user)
+        self.label_error = tk.Label(self, foreground='red')
+        self.label_error.pack(anchor="center")
+
+        registerbutton = tk.Button(self, text="Register", command=self.validate_input)
         registerbutton.pack(anchor="center")
 
     
@@ -44,11 +48,20 @@ class RegisterInterface(Page):
         password = self.passwordentry.get()
         confirmpassword = self.confirmpasswordentry.get()
 
-        
-    def register_user(self):
-        email = self.emailentry.get()
-        password = self.passwordentry.get()
-        result = encryptionservice.obtain_hash_master_password(password, email)
-        print(result)
+        if not user or not password:
+            self.label_error['text'] = "Fill all the fields"
+        elif not validation.check_email_valid(email):
+            self.label_error['text'] = "Invalid email"
+        elif not password == confirmpassword:
+            self.label_error['text'] = "Passwords are not equal"
+        else:
+            self.register_user(user,email,password)
+
+
+    def register_user(self, user, email, password):
+        hash_master_password, master_key = encryptionservice.obtain_hash_master_password_and_master_key(password, email)
+        print(hash_master_password)
+        protected_sym_key = encryptionservice.generate_protected_sym_key(master_key)
+        print("protected_key" , protected_sym_key)
 
 
