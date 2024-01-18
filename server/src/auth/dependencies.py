@@ -3,7 +3,7 @@ from src.auth import services
 from src.auth import encryptionmanager
 import src.auth.verification_token as verificate_token_manager
 from src.auth.schemas import RegisterRequest, LoginRequest, UserLoginResponse
-from src.auth.exceptions import UserExists, InvalidToken, ExpiredVerificationToken, UserNotExists, AccountVerified, InvalidCredentials
+from src.auth.exceptions import UserExists, InvalidToken, ExpiredVerificationToken, UserNotExists, AccountVerified, InvalidCredentials, EmailNotVerified
 import datetime
 
 async def valid_register_user(user_request: RegisterRequest) -> RegisterRequest:
@@ -35,6 +35,11 @@ async def valid_login_user(user_request: LoginRequest) -> UserLoginResponse:
   user = await services.get_user_by_email(user_request.email)
   if user is None:
     raise UserNotExists()
+  
+  if not user.verified:
+    if user.expires_at < datetime.datetime.utcnow():
+      await verificate_token_manager.send_verification_token(user.email)
+    raise EmailNotVerified()
   
   derived_hash = encryptionmanager.derive_userhash(user_request.userhash, user.salt)
   if not derived_hash  == user.userhash:

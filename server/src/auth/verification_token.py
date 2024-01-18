@@ -1,5 +1,8 @@
 from src.auth.authDBmanager import AuthDBmanager
-from src.auth.mail import send_verification_mail
+from src.auth import mail
+from src.exceptions import ServerError, DatabaseDown
+import uuid
+import datetime
 
 authmanager = AuthDBmanager()
 
@@ -13,5 +16,21 @@ async def get_verificationtoken_by_token(token):
 
 async def send_verification_token(email):
   token = await get_verificationtoken_by_email(email)
-  if token is not None:
-    send_verification_mail(email , token.verification_token)
+  if token is None:
+    raise ServerError()
+
+  if token.expires_at < datetime.datetime.utcnow():
+    new_token = await renew_verification_token(email)
+  
+  mail.send_verification_mail(email , new_token)
+
+
+async def renew_verification_token(email:str):
+  token = str(uuid.uuid4())
+  expiration_time = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+  try:
+    await authmanager.renew_verification_token(email, token, expiration_time)
+    return token
+  except Exception as e:
+    print(e)
+    raise DatabaseDown()

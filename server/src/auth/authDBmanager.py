@@ -69,3 +69,10 @@ class AuthDBmanager():
     except Exception as e:
       print(e)
       raise e
+    
+  async def renew_verification_token(self, email, token,expiration_time ):
+    try:
+      await insert_update_delete_one(update(Users).where(Users.email == email).values(verification_token=token, expires_at=expiration_time))
+    except Exception as e:
+      print(e)
+      raise e

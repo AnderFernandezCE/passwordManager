@@ -36,3 +36,7 @@ class DatabaseDown(DetailedHTTPException):
 class Unauthorized(DetailedHTTPException):
     STATUS_CODE = status.HTTP_401_UNAUTHORIZED
     DETAIL = "Not authorized"
+
+class Forbidden(DetailedHTTPException):
+    STATUS_CODE = status.HTTP_403_FORBIDDEN
+    DETAIL = "Forbidden"
