@@ -32,3 +32,7 @@ class ServerError(DetailedHTTPException):
 class DatabaseDown(DetailedHTTPException):
     STATUS_CODE = status.HTTP_503_SERVICE_UNAVAILABLE
     DETAIL = "Database service down"
+
+class Unauthorized(DetailedHTTPException):
+    STATUS_CODE = status.HTTP_401_UNAUTHORIZED
+    DETAIL = "Not authorized"

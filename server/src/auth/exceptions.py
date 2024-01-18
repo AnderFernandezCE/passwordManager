@@ -1,4 +1,4 @@
-from src.exceptions import Conflict, BadRequest, Gone, NotFound
+from src.exceptions import Conflict, BadRequest, Gone, NotFound, Unauthorized
 
 class UserExists(Conflict):
   DETAIL = "User already exists"
@@ -14,3 +14,6 @@ class ExpiredVerificationToken(Gone):
 
 class UserNotExists(NotFound):
   DETAIL = "User not found"
+
+class InvalidCredentials(Unauthorized):
+  DETAIL = "Invalid credentials"

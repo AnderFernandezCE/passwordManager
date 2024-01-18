@@ -61,6 +61,7 @@ class RegisterInterface(Page):
 
     def register_user(self, user, email, password):
         hash_master_password, master_key = encryptionservice.obtain_hash_master_password_and_master_key(password, email)
+        print(hash_master_password)
         del password
         protected_sym_key = encryptionservice.generate_protected_sym_key(master_key)
         response = requestservice.register_user(user,email, hash_master_password, protected_sym_key)

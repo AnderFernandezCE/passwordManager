@@ -1,8 +1,9 @@
 from typing import Mapping
 from src.auth import services
+from src.auth import encryptionmanager
 import src.auth.verification_token as verificate_token_manager
-from src.auth.schemas import RegisterRequest
-from src.auth.exceptions import UserExists, InvalidToken, ExpiredVerificationToken, UserNotExists, AccountVerified
+from src.auth.schemas import RegisterRequest, LoginRequest, UserLoginResponse
+from src.auth.exceptions import UserExists, InvalidToken, ExpiredVerificationToken, UserNotExists, AccountVerified, InvalidCredentials
 import datetime
 
 async def valid_register_user(user_request: RegisterRequest) -> RegisterRequest:
@@ -29,3 +30,20 @@ async def valid_verification_token(token):
   if existingUser is None:
     raise UserNotExists()
   return existingUser.UUID
+
+async def valid_login_user(user_request: LoginRequest) -> UserLoginResponse:
+  user = await services.get_user_by_email(user_request.email)
+  if user is None:
+    raise UserNotExists()
+  
+  derived_hash = encryptionmanager.derive_userhash(user_request.userhash, user.salt)
+  if not derived_hash  == user.userhash:
+    raise InvalidCredentials()
+  
+  return UserLoginResponse(
+        uuid = user.UUID,
+        username= user.username,
+        email= user.email,
+        # userhash: str  maybe for token auth?
+        protectedkey= user.key,
+    )
