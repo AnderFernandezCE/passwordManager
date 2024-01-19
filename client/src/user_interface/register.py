@@ -3,6 +3,7 @@ from src.user_interface.basemodel import Page
 from src.encryption import encryptionservice
 from src.utils import validation
 from src.apicall import requestservice
+from src.schemas import response as serverresponse
 
 class RegisterInterface(Page):
     def __init__(self, *args, **kwargs):
@@ -61,9 +62,9 @@ class RegisterInterface(Page):
 
     def register_user(self, user, email, password):
         hash_master_password, master_key = encryptionservice.obtain_hash_master_password_and_master_key(password, email)
-        print(hash_master_password)
         del password
         protected_sym_key = encryptionservice.generate_protected_sym_key(master_key)
         response = requestservice.register_user(user,email, hash_master_password, protected_sym_key)
-        print(response.get_message())
+        if isinstance(response, serverresponse.OkResponse):
+            print("NOS VAMOS PARA LA PAGINA PRINCIPAL")
         #TODO SHOW APPROPIATE RESPONSE TO USER

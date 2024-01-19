@@ -28,3 +28,11 @@ class OkResponse(Response):
 class ServerErrorResponse(Response):
   def get_message(self):
     return "Server has encountered an error"
+  
+class UserNotExists(Response):
+  def get_message(self):
+    return "User not exists"
+  
+class AccountNotVerified(Response):
+  def get_message(self):
+    return "Account not verified, please check the email"

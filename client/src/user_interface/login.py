@@ -1,5 +1,8 @@
 import tkinter as tk
 from src.user_interface.basemodel import Page
+from src.utils import validation
+from src.encryption import encryptionservice
+from src.apicall import requestservice
 
 class LoginInterface(Page):
     def __init__(self, *args, **kwargs):
@@ -12,14 +15,35 @@ class LoginInterface(Page):
         email = tk.Label(self, text="Email")
         email.pack( anchor="center")
 
-        emailentry = tk.Entry(self, width=30)
-        emailentry.pack( anchor="center")
+        self.emailentry = tk.Entry(self, width=30)
+        self.emailentry.pack( anchor="center")
 
         password = tk.Label(self, text="Password")
         password.pack( anchor="center")
 
-        passwordentry = tk.Entry(self, show="*",width=30)
-        passwordentry.pack( anchor="center")
+        self.passwordentry = tk.Entry(self, show="*",width=30)
+        self.passwordentry.pack( anchor="center")
 
-        loginbutton = tk.Button(self, text="Login")
+        self.label_error = tk.Label(self, foreground='red')
+        self.label_error.pack(anchor="center")
+
+        loginbutton = tk.Button(self, text="Login", command=self.validate_input)
         loginbutton.pack(anchor="center")
+
+    def validate_input(self):
+        email = self.emailentry.get()
+        password = self.passwordentry.get()
+
+        if not email or not password:
+            self.label_error['text'] = "Fill all the fields"
+        elif not validation.check_email_valid(email):
+            self.label_error['text'] = "Invalid email"
+        else:
+            self.login_user(email,password)
+
+
+    def login_user(self, email, password):
+        hash_master_password, master_key = encryptionservice.obtain_hash_master_password_and_master_key(password, email)
+        del password
+        response = requestservice.login_user(email, hash_master_password)
+        self.label_error['text'] = response.get_message()

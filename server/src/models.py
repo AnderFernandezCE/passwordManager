@@ -22,8 +22,8 @@ class Users(Base):
     email = Column('email', String(250))
     userhash = Column('userhash', Unicode(64))
     key = Column('key', Unicode(128))
-    publicKey = Column('publicKey', String(4000)) # not null
-    privateKey = Column('privateKey', String(4000)) # not null
+    # publicKey = Column('publicKey', String(4000)) # not null
+    # privateKey = Column('privateKey', String(4000)) # not null
     created_at = Column('created_at', DateTime, default=datetime.datetime.utcnow)
     salt = Column('salt', LargeBinary(32))
     verified =Column('verified', Boolean, default= False)
