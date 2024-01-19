@@ -3,6 +3,7 @@ from src.user_interface.basemodel import Page
 from src.utils import validation
 from src.encryption import encryptionservice
 from src.apicall import requestservice
+from src.schemas import response as serverresponse
 
 class LoginInterface(Page):
     def __init__(self, *args, **kwargs):
@@ -46,4 +47,13 @@ class LoginInterface(Page):
         hash_master_password, master_key = encryptionservice.obtain_hash_master_password_and_master_key(password, email)
         del password
         response = requestservice.login_user(email, hash_master_password)
-        self.label_error['text'] = response.get_message()
+        self.clear_form()
+        if isinstance(response, serverresponse.OkResponse):
+            print("NOS VAMOS PARA LA PAGINA PRINCIPAL")
+        else:
+            self.label_error['text'] = response.get_message()
+    
+    def clear_form(self):
+        self.emailentry.delete(0, "end")
+        self.passwordentry.delete(0, "end")
+        self.label_error['text'] = ""

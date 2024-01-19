@@ -40,6 +40,9 @@ class RegisterInterface(Page):
         self.label_error = tk.Label(self, foreground='red')
         self.label_error.pack(anchor="center")
 
+        clearbutton = tk.Button(self, text="Clear", command=self.clear_form)
+        clearbutton.pack(anchor="center")
+
         registerbutton = tk.Button(self, text="Register", command=self.validate_input)
         registerbutton.pack(anchor="center")
 
@@ -65,6 +68,15 @@ class RegisterInterface(Page):
         del password
         protected_sym_key = encryptionservice.generate_protected_sym_key(master_key)
         response = requestservice.register_user(user,email, hash_master_password, protected_sym_key)
+        self.clear_form()
         if isinstance(response, serverresponse.OkResponse):
             print("NOS VAMOS PARA LA PAGINA PRINCIPAL")
-        #TODO SHOW APPROPIATE RESPONSE TO USER
+        else:
+            self.label_error['text'] = response.get_message()
+            
+    def clear_form(self):
+        self.userentry.delete(0, "end")
+        self.emailentry.delete(0, "end")
+        self.passwordentry.delete(0, "end")
+        self.confirmpasswordentry.delete(0, "end")
+        self.label_error['text'] = ""
