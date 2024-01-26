@@ -1,6 +1,7 @@
 from ..validators.login import  LoginValidator
 from ..encryption import encryptionservice
 from ..models.api.userlogin import User
+from ..exceptions.validation import FormInvalid
 from src2.persistance.authAPI import LoginAPI
 
 class LoginController:
@@ -32,6 +33,15 @@ class LoginController:
       loginservice = LoginAPI(user.to_dict())
       response = loginservice.login()
       print(response) # should create a new model - account(protected key etc...)
+      self.frame.clear_form()
+    except FormInvalid as e:
+      self.frame.label_error['text'] = e
     except Exception as e:
+      self.frame.clear_form()
       self.frame.label_error['text'] = e
     
+    # finally:
+      # Clear sensitive data from memory
+      # password = " " * len(password)
+      # hmp = " " * len(hmp) if hmp else ""
+      # del password, hmp, user

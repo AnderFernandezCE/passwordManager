@@ -1,7 +1,9 @@
 from ..validators.register import  RegisterValidator
 from ..encryption import encryptionservice
 from ..models.api.userregister import User
+from ..exceptions.validation import FormInvalid
 from src2.persistance.authAPI import RegisterAPI
+
 
 class RegisterController:
   def __init__(self, view):
@@ -36,7 +38,18 @@ class RegisterController:
       response = registerservice.register()
       print(response) # should create a new model - account(protected key etc...)
       self.frame.clear_form()
+    except FormInvalid as e:
+      self.frame.label_error['text'] = e
     except Exception as e:
       self.frame.clear_form()
       self.frame.label_error['text'] = e
+    
+    # finally:
+        # Clear sensitive data from memory
+        # password = " " * len(password)
+        # confirmpassword = " " * len(confirmpassword)
+        # hmp = " " * len(hmp) if hmp else hmp
+        # mk = " " * len(mk) if mk else mk
+        # key = " " * len(key) if key else key
+        # del password, confirmpassword, hmp, mk, key, user
       

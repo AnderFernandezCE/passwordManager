@@ -1,4 +1,5 @@
 from ..validators.email import check_email_valid
+from ..exceptions.validation import FormInvalid
 
 class RegisterValidator:
   def __init__(self):
@@ -6,8 +7,8 @@ class RegisterValidator:
 
   def validate(self, user, email, password, confirmpassword):
     if not user or not password:
-      raise Exception("Fill all the fields")
+      raise FormInvalid("Fill all the fields")
     elif not check_email_valid(email):
-       raise Exception("Invalid email")
+       raise FormInvalid("Invalid email")
     elif not password == confirmpassword:
-       raise Exception("Passwords are not equal")
+       raise FormInvalid("Passwords are not equal")

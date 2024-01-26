@@ -26,6 +26,9 @@ class LoginInterface(tk.Frame):
         self.label_error = tk.Label(self, foreground='red')
         self.label_error.pack(anchor="center")
 
+        self.clearbutton = tk.Button(self, text="Clear", command=self.clear_form)
+        self.clearbutton.pack(anchor="center")
+        
         self.loginbutton = tk.Button(self, text="Login")
         self.loginbutton.pack(anchor="center")
 
@@ -33,3 +36,8 @@ class LoginInterface(tk.Frame):
         self.noaccount.pack( anchor="center", pady=(20,5))
         self.registerbutton = tk.Button(self, text="REGISTER")
         self.registerbutton.pack(anchor="center")
+    
+    def clear_form(self):
+        self.emailentry.delete(0, "end")
+        self.passwordentry.delete(0, "end")
+        self.label_error['text'] = ""

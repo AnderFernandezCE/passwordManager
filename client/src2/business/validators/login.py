@@ -1,4 +1,5 @@
 from ..validators.email import check_email_valid
+from ..exceptions.validation import FormInvalid
 
 class LoginValidator:
   def __init__(self):
@@ -6,6 +7,6 @@ class LoginValidator:
 
   def validate(self, email, password):
     if not email or not password:
-      raise Exception ("Fill all the fields")
+      raise FormInvalid ("Fill all the fields")
     elif not check_email_valid(email):
-      raise Exception("Invalid email")
+      raise FormInvalid("Invalid email")
