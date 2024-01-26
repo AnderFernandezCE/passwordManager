@@ -18,13 +18,7 @@ class AuthDBmanager():
   
   async def register_user(self, user:UserEntity) -> None:
     try:
-      await insert_update_delete_one(insert(Users).values(
-        username=user.username, 
-        email = user.email, 
-        userhash=user.userhash, 
-        key=user.key, 
-        publicKey="",
-        salt= user.salt
+      await insert_update_delete_one(insert(Users).values(**user.dict()
         )
       )
       return True

@@ -1,4 +1,7 @@
 from ..validators.login import  LoginValidator
+from ..encryption import encryptionservice
+from ..models.api.userlogin import User
+from src2.persistance.authAPI import LoginAPI
 
 class LoginController:
   def __init__(self, view):
@@ -24,7 +27,11 @@ class LoginController:
     password = self.frame.passwordentry.get()
     try:
       self.validator.validate(email, password)
-      # make the login/ in persistence data?
+      hmp,_ = encryptionservice.obtain_hash_master_password_and_master_key(password,email)
+      user = User(email,hmp)
+      loginservice = LoginAPI(user.to_dict())
+      response = loginservice.login()
+      print(response) # should create a new model - account(protected key etc...)
     except Exception as e:
       self.frame.label_error['text'] = e
     

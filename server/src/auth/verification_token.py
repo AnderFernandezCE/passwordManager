@@ -21,6 +21,8 @@ async def send_verification_token(email):
 
   if token.expires_at < datetime.datetime.utcnow():
     new_token = await renew_verification_token(email)
+  else:
+    new_token = token.verification_token
   
   mail.send_verification_mail(email , new_token)
 
