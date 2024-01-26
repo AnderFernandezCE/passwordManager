@@ -4,6 +4,9 @@ class RegisterInterface(tk.Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.homebutton = tk.Button(self, text="HOME")
+        self.homebutton.pack(anchor="w")
+
         self.register = tk.Label(self, text= "REGISTER")
         self.register.config(font=("Italic", 44))
         self.register.pack( anchor="center")
@@ -40,7 +43,12 @@ class RegisterInterface(tk.Frame):
 
         self.registerbutton = tk.Button(self, text="Register")
         self.registerbutton.pack(anchor="center")
-            
+        
+        self.haveaccount = tk.Label(self, text="You already have an account? login here:")
+        self.haveaccount.pack( anchor="center", pady=(20,5))
+        self.loginbutton = tk.Button(self, text="LOGIN")
+        self.loginbutton.pack(anchor="center")
+
     def clear_form(self):
         self.userentry.delete(0, "end")
         self.emailentry.delete(0, "end")

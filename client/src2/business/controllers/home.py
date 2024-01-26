@@ -14,4 +14,3 @@ class HomeController:
 
   def register(self):
     self.view.switch("register")
-

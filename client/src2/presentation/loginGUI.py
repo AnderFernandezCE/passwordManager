@@ -4,6 +4,9 @@ class LoginInterface(tk.Frame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.homebutton = tk.Button(self, text="HOME")
+        self.homebutton.pack(anchor="w")
+
         self.login = tk.Label(self, text= "LOGIN", pady=20)
         self.login.config(font=("Italic", 44))
         self.login.pack( anchor="center")
@@ -25,3 +28,8 @@ class LoginInterface(tk.Frame):
 
         self.loginbutton = tk.Button(self, text="Login")
         self.loginbutton.pack(anchor="center")
+
+        self.noaccount = tk.Label(self, text="Don't have a account? register here:")
+        self.noaccount.pack( anchor="center", pady=(20,5))
+        self.registerbutton = tk.Button(self, text="REGISTER")
+        self.registerbutton.pack(anchor="center")
