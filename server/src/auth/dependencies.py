@@ -22,7 +22,7 @@ async def valid_verification_token(token):
   if token.verified:
     raise AccountVerified()
   
-  expired = True if token.expires_at < datetime.datetime.utcnow() else False
+  expired = True if token.expires_at < datetime.datetime.now() else False
   if expired:
     raise ExpiredVerificationToken()
   
@@ -51,4 +51,5 @@ async def valid_login_user(user_request: LoginRequest) -> UserLoginResponse:
         email= user.email,
         # userhash: str  maybe for token auth?
         protectedkey= user.key,
+        refresh_token=""
     )

@@ -2,7 +2,7 @@ from ..validators.register import  RegisterValidator
 from ..encryption import encryptionservice
 from ..models.api.userregister import User
 from ..exceptions.validation import FormInvalid
-from src2.persistance.authAPI import RegisterAPI
+from src.persistance.authAPI import RegisterAPI
 
 
 class RegisterController:

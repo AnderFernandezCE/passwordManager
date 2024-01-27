@@ -2,7 +2,7 @@ from ..validators.login import  LoginValidator
 from ..encryption import encryptionservice
 from ..models.api.userlogin import User
 from ..exceptions.validation import FormInvalid
-from src2.persistance.authAPI import LoginAPI
+from src.persistance.authAPI import LoginAPI
 
 class LoginController:
   def __init__(self, view):

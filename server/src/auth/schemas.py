@@ -19,7 +19,7 @@ class UserLoginResponse(BaseModel):
   email: str
   # userhash: str  maybe for token auth?
   protectedkey: str
-  # auth token, todo
+  refresh_token : str
 
 class LoginRequest(BaseModel):
   email: str

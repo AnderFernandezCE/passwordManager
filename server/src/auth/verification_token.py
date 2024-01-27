@@ -19,7 +19,7 @@ async def send_verification_token(email):
   if token is None:
     raise ServerError()
 
-  if token.expires_at < datetime.datetime.utcnow():
+  if token.expires_at < datetime.datetime.now():
     new_token = await renew_verification_token(email)
   else:
     new_token = token.verification_token
@@ -29,7 +29,7 @@ async def send_verification_token(email):
 
 async def renew_verification_token(email:str):
   token = str(uuid.uuid4())
-  expiration_time = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+  expiration_time = datetime.datetime.now() + datetime.timedelta(hours=1)
   try:
     await authmanager.renew_verification_token(email, token, expiration_time)
     return token

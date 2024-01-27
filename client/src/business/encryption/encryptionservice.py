@@ -1,4 +1,4 @@
-from src.encryption import lowencryption
+from src.business.encryption import lowencryption
 
 def obtain_hash_master_password_and_master_key(payload:str, salt:str):
   """payload = password 

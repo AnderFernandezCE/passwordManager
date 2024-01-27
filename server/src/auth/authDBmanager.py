@@ -1,6 +1,6 @@
 from src.database import fetch_one,fetch_one_columns, insert_update_delete_one
 from sqlalchemy import select, insert, update, delete
-from src.models import Users
+from src.models import Users, AuthRequests
 from src.auth.schemas import UserEntity
 
 class AuthDBmanager():
@@ -67,6 +67,13 @@ class AuthDBmanager():
   async def renew_verification_token(self, email, token,expiration_time ):
     try:
       await insert_update_delete_one(update(Users).where(Users.email == email).values(verification_token=token, expires_at=expiration_time))
+    except Exception as e:
+      print(e)
+      raise e
+    
+  async def renew_refresh_token(self, token, uuid, expiration_datetime):
+    try:
+      await insert_update_delete_one(insert(AuthRequests).values(jwt=token, userID = uuid ,expires_at=expiration_datetime, valid=True))
     except Exception as e:
       print(e)
       raise e

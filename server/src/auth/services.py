@@ -1,6 +1,7 @@
 from src.auth.authDBmanager import AuthDBmanager
 from src.auth import encryptionmanager
 from src.auth import usermanager
+from src.auth import refresh_token as refresh_token_service
 import src.auth.verification_token as verification_token
 from src.auth.schemas import RegisterRequest, UserRequest, UserEntity
 from src.exceptions import ServerError
@@ -33,6 +34,15 @@ async def register_user(user: UserRequest):
     raise ServerError()
 
 ############# LOGIN FUNCTIONS ####################
+async def generate_refresh_token(uuid):
+  # await authmanager.verificate_user_account(uuid)
+  try:
+    refresh_token = refresh_token_service.generate_refresh_token(uuid)
+    await refresh_token_service.update_db(refresh_token)
+    return refresh_token
+  except Exception as e:
+    print(e)
+    raise ServerError()
 
 ############# ACCOUNT VERIFICATION TOKEN FUNCTIONS ####################
 async def verificate_user_account(uuid):

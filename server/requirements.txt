@@ -6,3 +6,4 @@ pydantic[email]
 SQLalchemy
 aiomysql
 resend
+python-jose[cryptography]

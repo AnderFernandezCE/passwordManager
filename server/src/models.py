@@ -11,7 +11,7 @@ def generate_uuid():
     return str(uuid.uuid4())
 
 def get_verification_token_expiration_time():
-    return datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+    return datetime.datetime.now() + datetime.timedelta(hours=1)
 
 
 class Users(Base):
@@ -29,34 +29,16 @@ class Users(Base):
     verified =Column('verified', Boolean, default= False)
     verification_token = Column('verification_token', CHAR(36), default=generate_uuid)
     expires_at = Column('expires_at', DateTime, default=get_verification_token_expiration_time)
-    
 
-# class Link(Base):
-#     __tablename__ = "link"
+class AuthRequests(Base):
+    __tablename__ = "auth_requests"
 
-#     id = Column(Integer, primary_key=True)
-#     url = Column('url', Text())
-#     project_id = Column(Integer, ForeignKey('project.id')) 
-
-# class Repo(Base):
-#     __tablename__ = "repo"
-
-#     id = Column(Integer, primary_key=True)
-#     domain = Column('domain', String(200), unique=True)
-#     description = Column('description', String(200))
-#     lastupdate = Column('lastupdate', DateTime)
-#     librarysoft = Column('librarysoft', String(100))
-
-# class Availability(Base):
-#     __tablename__ = "availability"
-
-#     project_id = Column(Integer, ForeignKey('project.id'), primary_key=True) 
-#     downloaded = Column('downloaded', BOOLEAN)
-#     availability_status = Column('availability_status', BOOLEAN)
-#     description = Column('description', String(200))
-#     last_check = Column('last_check', DateTime)
-#     embeddings_generated = Column('embeddings_generated', BOOLEAN)
-#     embedded = Column('embedded', BOOLEAN)
+    id = Column(CHAR(36), primary_key=True, default=generate_uuid)
+    jwt = Column(String(4096), nullable=False)
+    userID = Column('userID', String(50), ForeignKey('users.UUID'), nullable=False)
+    creation_date= Column('creation_date', DateTime, default=datetime.datetime.now)
+    expires_at = Column('expires_at', DateTime)
+    valid = Column('valid', Boolean)
 
 def get_Base():
   return Base
