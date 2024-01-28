@@ -37,6 +37,7 @@ async def register_user(user: UserRequest):
 async def generate_refresh_token(uuid):
   # await authmanager.verificate_user_account(uuid)
   try:
+    await refresh_token_service.delete_existing_refreshtoken(uuid)
     refresh_token = refresh_token_service.generate_refresh_token(uuid)
     await refresh_token_service.update_db(refresh_token)
     return refresh_token
@@ -47,3 +48,10 @@ async def generate_refresh_token(uuid):
 ############# ACCOUNT VERIFICATION TOKEN FUNCTIONS ####################
 async def verificate_user_account(uuid):
   await authmanager.verificate_user_account(uuid)
+
+#############  TOKEN FUNCTIONS ####################
+async def  revoke_token(token):
+  await refresh_token_service.revoke_token(token)
+
+def generate_access_token(token):
+  return refresh_token_service.generate_access_token(token)

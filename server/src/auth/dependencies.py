@@ -1,10 +1,13 @@
 from typing import Mapping
 from src.auth import services
 from src.auth import encryptionmanager
+import src.auth.refresh_token as refresh_token_service
 import src.auth.verification_token as verificate_token_manager
 from src.auth.schemas import RegisterRequest, LoginRequest, UserLoginResponse
-from src.auth.exceptions import UserExists, InvalidToken, ExpiredVerificationToken, UserNotExists, AccountVerified, InvalidCredentials, EmailNotVerified
+from src.auth.exceptions import UserExists, InvalidToken, ExpiredVerificationToken, UserNotExists, AccountVerified, InvalidCredentials, EmailNotVerified, InvalidRefreshToken
 import datetime
+from fastapi import  Depends
+from fastapi.security import OAuth2PasswordBearer
 
 async def valid_register_user(user_request: RegisterRequest) -> RegisterRequest:
   #check email exists
@@ -53,3 +56,21 @@ async def valid_login_user(user_request: LoginRequest) -> UserLoginResponse:
         protectedkey= user.key,
         refresh_token=""
     )
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+def is_token_valid(token: str = Depends(oauth2_scheme)):
+  valid = refresh_token_service.is_token_valid(token)
+  if valid:
+    return token
+  else:
+    raise InvalidRefreshToken()
+  
+async def is_token_valid_db(token: str = Depends(oauth2_scheme)):
+  valid = refresh_token_service.is_token_valid(token)
+  if not valid:
+    raise InvalidRefreshToken()
+  active = refresh_token_service.is_active_token(token)
+  if not active:
+    raise InvalidRefreshToken()
+  return token

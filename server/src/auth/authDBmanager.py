@@ -77,3 +77,25 @@ class AuthDBmanager():
     except Exception as e:
       print(e)
       raise e
+    
+  async def delete_existing_refreshtoken(self, uuid):
+    try:
+      await insert_update_delete_one(delete(AuthRequests).where(AuthRequests.userID == uuid))
+    except Exception as e:
+      print(e)
+      raise e
+    
+  async def delete_refreshtoken(self, jwt):
+    try:
+      await insert_update_delete_one(delete(AuthRequests).where(AuthRequests.jwt == jwt))
+    except Exception as e:
+      print(e)
+      raise e
+    
+  async def get_refreshtoken_by_token(self, jwt) -> AuthRequests:
+    try:
+      token = await fetch_one(select(AuthRequests).where(AuthRequests.jwt == jwt))
+      return  token
+    except Exception as e:
+      print(e)
+      raise e

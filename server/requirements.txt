@@ -7,3 +7,4 @@ SQLalchemy
 aiomysql
 resend
 python-jose[cryptography]
+pytz

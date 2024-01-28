@@ -2,7 +2,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, Response, status, Query
 from fastapi.security import OAuth2PasswordBearer
 
 from src.auth.schemas import RegisterRequest, RegisterResponse, UserLoginResponse, LoginRequest
-from src.auth.dependencies import valid_register_user, valid_verification_token, valid_login_user
+from src.auth.dependencies import valid_register_user, valid_verification_token, valid_login_user, is_token_valid, is_token_valid_db
 from src.auth import services
 
 router = APIRouter()
@@ -32,7 +32,13 @@ async def verificate(token : str  = Depends(valid_verification_token)):
 # TOKENS/SESSIONS REFRESH
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-@router.get("/get-access-token", status_code=status.HTTP_200_OK)
-async def get_access_token(token: str = Depends(oauth2_scheme)):
-    return {"status": token}
+@router.post("/get-access-token", status_code=status.HTTP_200_OK)
+async def get_access_token(token: str = Depends(is_token_valid_db)):
+    access_token = services.generate_access_token(token)
+    return {"access_token": access_token}
+
+@router.post("/revoke-token", status_code=status.HTTP_200_OK)
+async def revoke_token(token: str = Depends(is_token_valid)):
+    await services.revoke_token(token)
+    return {"status": "revoked"}
     

@@ -20,3 +20,6 @@ class InvalidCredentials(Unauthorized):
 
 class EmailNotVerified(Forbidden):
   DETAIL = "Your email address is not verified"
+
+class InvalidRefreshToken(Unauthorized):
+  DETAIL = "Invalid Refresh Token"
