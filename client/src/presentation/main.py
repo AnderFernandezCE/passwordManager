@@ -2,6 +2,7 @@ from .root import Root
 from .homeGUI import HomeInterface
 from .loginGUI import LoginInterface
 from .registerGUI import RegisterInterface
+from .appGUI import AppInterface
 
 class View:
     def __init__(self):
@@ -11,6 +12,7 @@ class View:
         self._add_frame(HomeInterface, "home")
         self._add_frame(LoginInterface, "login")
         self._add_frame(RegisterInterface, "register")
+        self._add_frame(AppInterface, "app")
 
     def _add_frame(self, Frame, name):
         self.frames[name] = Frame(self.root)

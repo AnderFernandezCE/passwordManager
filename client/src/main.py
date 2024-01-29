@@ -1,11 +1,12 @@
 from src.presentation.main import View
-from src.business.controllers.home import HomeController
-from src.business.controllers.login import LoginController
-from src.business.controllers.register import RegisterController
+from src.business.controllers.main import Controller
+from src.business.models.account.account  import UserAccount
 
-view = View()
-view.switch("home")
-HomeController(view)
-LoginController(view)
-RegisterController(view)
-view.start_mainloop()
+def main():
+  view = View()
+  model = UserAccount()
+  controller = Controller(view, model)
+  controller.start()
+
+if __name__ == "__main__":
+  main()

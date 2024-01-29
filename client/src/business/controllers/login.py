@@ -3,10 +3,11 @@ from ..encryption import encryptionservice
 from ..models.api.userlogin import User
 from ..exceptions.validation import FormInvalid
 from src.persistance.authAPI import LoginAPI
+from src.business.models.account.account_data import AccountData
 
 class LoginController:
-  def __init__(self, view):
-    # self.model = model
+  def __init__(self, view, model):
+    self.model = model
     self.view = view
     self.frame = self.view.frames["login"]
     self.validator = LoginValidator()
@@ -34,6 +35,15 @@ class LoginController:
       response = loginservice.login()
       print(response) # should create a new model - account(protected key etc...)
       self.frame.clear_form()
+      account_data = AccountData(
+        response.get("email"),
+        response.get("username"),
+        response.get("uuid"),
+        response.get("protectedkey"),
+        response.get("refresh_token")
+      )
+      self.model.login(account_data)
+      self.view.switch("app")
     except FormInvalid as e:
       self.frame.label_error['text'] = e
     except Exception as e:
