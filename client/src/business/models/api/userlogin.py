@@ -1,4 +1,4 @@
-class User:
+class LoginModel:
   def __init__(self, email, userhash):
     self.email = email
     self.userhash = userhash

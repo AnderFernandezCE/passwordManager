@@ -8,3 +8,6 @@ class AccountData:
 
   def get_username(self):
     return self.username
+  
+  def get_refresh_token(self):
+    return self.refresh_token

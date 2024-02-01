@@ -6,7 +6,7 @@ class AppInterface(tk.Frame):
 
         self.logoutbutton = tk.Button(self, text="LOGOUT")
         self.logoutbutton.pack(anchor="e")
-        self.welcome = tk.Label(self, text="Hello: Ander")
+        self.welcome = tk.Label(self, text="Hello: User")
         self.welcome.pack( anchor="w")
 
         self.title = tk.Label(self, text= "Passwords", pady=20)

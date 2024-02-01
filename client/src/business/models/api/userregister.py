@@ -1,4 +1,4 @@
-class User:
+class RegisterModel:
   def __init__(self, username, email, hash_master_password, key):
     self.username =  username
     self.email = email

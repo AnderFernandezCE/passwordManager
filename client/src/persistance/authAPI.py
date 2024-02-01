@@ -9,10 +9,10 @@ class AuthAPI:
 class LoginAPI(AuthAPI):
   def __init__(self, user):
     super().__init__(user)
-    self.login_url = self.base_url + "login"
 
   def login(self):
-    x = requests.post(self.login_url, json = self.entity, verify=False)
+    login_url = self.base_url + "login"
+    x = requests.post(login_url, json = self.entity, verify=False)
     if x.status_code == 404:# user not exists
       raise Exception("User not exists")
     if x.status_code == 403:# account not verified
@@ -21,6 +21,21 @@ class LoginAPI(AuthAPI):
       raise Exception("Incorrect email or password.")
     if x.status_code == 200:# ok
       return x.json()
+    
+
+class LogoutAPI(AuthAPI):
+  def __init__(self, token):
+    super().__init__(token)
+
+    
+  def logout(self):
+    logout_url = self.base_url + "revoke-token"
+    headers = {"Authorization": f"Bearer {self.entity}"}
+    x = requests.post(logout_url, headers=headers, verify=False)
+    if x.status_code == 401:# not valid token
+      raise Exception("Not a valid token")
+    if x.status_code == 200:# ok
+      return 
 
 class RegisterAPI(AuthAPI):
   def __init__(self, user):

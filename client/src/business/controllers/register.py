@@ -1,6 +1,6 @@
 from ..validators.register import  RegisterValidator
 from ..encryption import encryptionservice
-from ..models.api.userregister import User
+from ..models.api.userregister import RegisterModel
 from ..exceptions.validation import FormInvalid
 from src.persistance.authAPI import RegisterAPI
 
@@ -33,7 +33,7 @@ class RegisterController:
       self.validator.validate(user,email, password, confirmpassword)
       hmp,mk = encryptionservice.obtain_hash_master_password_and_master_key(password,email)
       key = encryptionservice.generate_protected_sym_key(mk)
-      user = User(user,email,hmp,key)
+      user = RegisterModel(user,email,hmp,key)
       registerservice = RegisterAPI(user.to_dict())
       response = registerservice.register()
       print(response) # should create a new model - account(protected key etc...)
