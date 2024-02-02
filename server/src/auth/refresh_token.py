@@ -67,7 +67,7 @@ def is_token_valid(token):
     return False  # Token has expired
   
 async def is_active_token(token):
-  db_token = authmanager.get_refreshtoken_by_token(token)
+  db_token = await authmanager.get_refreshtoken_by_token(token)
   if not db_token:
     return False
   if not db_token.valid:
@@ -80,3 +80,15 @@ def generate_access_token(token):
               "sub": sub}  
   encoded_jwt = jwt.encode(to_encode, access_private_key, algorithm=ALGORITHM)
   return encoded_jwt
+
+
+def is_access_token_valid(token):
+  try:
+    decoded_token = jwt.decode(token, access_public_key, algorithms=ALGORITHM)
+    token_expiration = decoded_token.get('exp')
+    time = datetime.datetime.fromtimestamp(token_expiration)
+    if datetime.datetime.now() < time:
+      return decoded_token.get('sub')  
+    return False
+  except Exception as e:
+    return False  # Token has expired

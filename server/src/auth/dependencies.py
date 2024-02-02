@@ -70,7 +70,7 @@ async def is_token_valid_db(token: str = Depends(oauth2_scheme)):
   valid = refresh_token_service.is_token_valid(token)
   if not valid:
     raise InvalidRefreshToken()
-  active = refresh_token_service.is_active_token(token)
+  active = await refresh_token_service.is_active_token(token)
   if not active:
     raise InvalidRefreshToken()
   return token
