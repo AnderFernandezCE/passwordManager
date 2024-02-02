@@ -61,6 +61,6 @@ async def insert_update_delete_one(select_query: Insert | Update | Delete) ->  N
 
 async def fetch_one_columns(select_query: Select | Insert | Update):
     async with get_session() as session:
-        result = await session.execute(select_query)
-        return result.first()
+      result = await session.execute(select_query)
+      return result.first()
     

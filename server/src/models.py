@@ -40,5 +40,15 @@ class AuthRequests(Base):
     expires_at = Column('expires_at', DateTime)
     valid = Column('valid', Boolean)
 
+class Vault(Base):
+    __tablename__ = "vault"
+
+    id = Column(CHAR(36), primary_key=True, default=generate_uuid)
+    user_id = Column(String(50),ForeignKey('users.UUID'), nullable=False)
+    created_at= Column('created_at', DateTime, default=datetime.datetime.now, nullable=False)
+    updated_at= Column('updated_at', DateTime, default=datetime.datetime.now, nullable=False)
+    name = Column('name', String(4096), nullable=False)
+    data = Column('data', String(4096), nullable=False)
+
 def get_Base():
   return Base
