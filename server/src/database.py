@@ -60,7 +60,15 @@ async def insert_update_delete_one(select_query: Insert | Update | Delete) ->  N
     await session.commit()
 
 async def fetch_one_columns(select_query: Select | Insert | Update):
+    """Selects one row with partial columns and returns as object."""
     async with get_session() as session:
       result = await session.execute(select_query)
       return result.first()
     
+async def fetch_all_columns(select_query: Select | Insert | Update):
+  """Selects multiple row with partial columns and returns as dict."""
+  async with get_session() as session:
+    result: CursorResult = await session.execute(select_query)
+    rows = result.mappings().all()
+    return [{key: row[key] for key in select_query.columns.keys()} for row in rows]
+  

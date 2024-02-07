@@ -1,7 +1,7 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, Response, status, Query
 from src.vault.dependencies import valid_user_token
 from src.vault import services
-from src.vault.schemas import PasswordsResponse, CipherData, CreateItemRequest
+from src.vault.schemas import PasswordsResponse, CipherData, CreateItemRequest, UpdateDataRequest
 
 router = APIRouter()
 
@@ -13,6 +13,11 @@ async def home(token:str = Depends(valid_user_token)) -> dict[str, str]:
 async def create_item(item: CreateItemRequest, user_token:str = Depends(valid_user_token)) -> CipherData:
     created_item = await services.create_item(item,user_token)
     return created_item
+
+@router.put("/update-item", status_code=status.HTTP_200_OK, response_model=CipherData)
+async def update_item(item: UpdateDataRequest, user_token:str = Depends(valid_user_token)) -> CipherData:
+    updated_item = await services.update_item(item)
+    return updated_item
 
 @router.post("/get-passwords", status_code=status.HTTP_200_OK, response_model=PasswordsResponse)
 async def get_password(user_token:str = Depends(valid_user_token)) -> PasswordsResponse:
