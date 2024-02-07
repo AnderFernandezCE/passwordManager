@@ -21,9 +21,18 @@ class VaultDBmanager():
       return item
     return None
   
+  async def delete_item(self, id):
+    await insert_update_delete_one(delete(Vault).where(Vault.id == id))
+  
   async def get_all_items(self, user_uuid) -> Vault:
     item = await fetch_all_columns(select(Vault.id, Vault.created_at, Vault.updated_at, Vault.name, Vault.data).where(Vault.user_id == user_uuid))
     if item:
       return item
     return None
+  
+  async def exists_item(self, item_id) -> bool:
+    item = await fetch_one(select(Vault.id, Vault.created_at, Vault.updated_at).where(Vault.id == item_id))
+    if item:
+      return True
+    return False
   

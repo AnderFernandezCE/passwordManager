@@ -6,7 +6,6 @@ vault_manager = VaultDBmanager()
 
 async def get_passwords(user_token):
   items = await vault_manager.get_all_items(user_token)
-  print(items)
   response = {"user_id": user_token,
               "user_data": {}}
   if items is None:
@@ -34,3 +33,6 @@ async def update_item(item):
                     updated_at=item.updated_at.date(),
                     data=item.data)
   return item
+
+async def delete_item(item):
+  await vault_manager.delete_item(item.id)

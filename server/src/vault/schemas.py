@@ -40,3 +40,6 @@ class UpdateDataRequest(BaseModel):
       super().__init__(**data)
       if self.name is None and self.data is None:
         raise ValueError("At least one of 'name' or 'data' must be provided")
+      
+class DeleteRequest(BaseModel):
+  id: str
