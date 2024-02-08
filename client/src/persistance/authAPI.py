@@ -50,3 +50,16 @@ class RegisterAPI(AuthAPI):
       raise Exception("Server has encountered an error")
     if x.status_code == 201:# created
       return x.json()
+    
+class TokenAPI(AuthAPI):
+  def __init__(self, user):
+    super().__init__(user)
+    self.renew_token = self.base_url + "get-access-token"
+
+  def renew_access_token(self):
+    headers = {"Authorization": f"Bearer {self.entity}"}
+    x = requests.post(self.renew_token, headers=headers, verify=False)
+    if x.status_code == 401:# not valid token
+      raise Exception("Not a valid token")
+    if x.status_code == 200:# ok
+      return x.json()
