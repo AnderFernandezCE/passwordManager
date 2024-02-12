@@ -10,10 +10,12 @@ class UserAccount(ObservableModel):
   def login(self, account_data):
     self.logged_in = True
     self.account_data = account_data
+    self.account_data.refresh_access_token()
     self.trigger_event("login")
   
   def logout(self):
     self.logged_in = False
+    self.account_data.delete_schedule()
     self.account_data = None
     self.trigger_event("logout")
 
