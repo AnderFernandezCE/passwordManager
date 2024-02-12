@@ -13,6 +13,7 @@ class AccountData:
     self.access_token = None
     self.data = {}
     self.scheduler = sched.scheduler(time.time, time.sleep)
+    self.scheduler_thread = None
 
   def get_username(self):
     return self.username
@@ -36,8 +37,11 @@ class AccountData:
     return self.data
   
   def refresh_access_token(self):
+    if not self.scheduler_thread or not self.scheduler_thread.is_alive():
+      self.scheduler_thread = threading.Thread(target=self.scheduler.run, daemon=True)
     self.update_access_token()
-    threading.Thread(target=self.scheduler.run).start()
+    self.scheduler_thread.start()
+    # threading.Thread(target=self.scheduler.run).start()
 
   def update_access_token(self):
     tokenAPI = TokenAPI(self.get_refresh_token())
@@ -49,3 +53,5 @@ class AccountData:
   def delete_schedule(self):
     for event in self.scheduler.queue:
       self.scheduler.cancel(event)
+    if self.scheduler_thread and self.scheduler_thread.is_alive():
+      self.scheduler_thread.join(timeout=1)

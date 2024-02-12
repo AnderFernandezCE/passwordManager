@@ -1,4 +1,4 @@
-from src.persistance.authAPI import LogoutAPI, TokenAPI
+from src.persistance.authAPI import LogoutAPI
 from src.persistance.vaultAPI import AllDataAPI
 
 class AppController:
@@ -16,16 +16,9 @@ class AppController:
     item = self.frame.table.item(curItem)
     self.frame.name.set(item.get("text", "nada"))
     item_values = item.get('values')
-    print(item.get('values'))
     self.frame.username.set(item_values[1])
     self.frame.password.set(item_values[2])
     self.frame.extra.set(item_values[3])
-
-  def get_access_token(self):
-    refresh_token = self.model.account_data.get_refresh_token()
-    tokenAPI = TokenAPI(refresh_token)
-    access_token = tokenAPI.renew_access_token().get("access_token")
-    self.model.account_data.set_access_token(access_token)
 
   def get_user_data(self):
     refresh_token = self.model.account_data.get_access_token()
@@ -42,7 +35,6 @@ class AppController:
 
   def update_view(self):
     if self.model.account_data:
-      # self.get_access_token()
       self.get_user_data()
       self.frame.welcome["text"] = "Welcome " + self.model.account_data.get_username()
       self.update_table_data()

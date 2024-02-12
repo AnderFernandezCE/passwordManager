@@ -11,6 +11,7 @@ class Controller:
     self.login_controller = LoginController(view, model)
     self.register_controller = RegisterController(view, model)
     self.app_controller = AppController(view, model)
+    self._bind_app()
     self.bind_model_triggers()
 
   def bind_model_triggers(self):
@@ -30,3 +31,11 @@ class Controller:
   def start(self):
     self.view.switch("home")
     self.view.start_mainloop()
+  
+  def on_close(self):
+    if self.model.account_data:
+      self.app_controller.logout()
+    self.view.root.destroy()
+
+  def _bind_app(self):
+    self.view.root.protocol("WM_DELETE_WINDOW", self.on_close)
