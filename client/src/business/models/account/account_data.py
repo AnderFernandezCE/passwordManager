@@ -1,6 +1,7 @@
 import sched
 import time
 import threading
+from src.persistance.authAPI import  TokenAPI
 
 class AccountData:
   def __init__(self, username, uuid, email, refresh_token, protected_key):
@@ -39,8 +40,11 @@ class AccountData:
     threading.Thread(target=self.scheduler.run).start()
 
   def update_access_token(self):
-    self.scheduler.enter(5,1,self.update_access_token)
-    print("calling to access api")
+    tokenAPI = TokenAPI(self.get_refresh_token())
+    access_token = tokenAPI.renew_access_token().get("access_token")
+    self.set_access_token(access_token)
+    print("access token renewed")
+    self.scheduler.enter(260,1,self.update_access_token)
   
   def delete_schedule(self):
     for event in self.scheduler.queue:

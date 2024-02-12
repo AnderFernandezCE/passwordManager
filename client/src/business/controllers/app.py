@@ -42,7 +42,7 @@ class AppController:
 
   def update_view(self):
     if self.model.account_data:
-      self.get_access_token()
+      # self.get_access_token()
       self.get_user_data()
       self.frame.welcome["text"] = "Welcome " + self.model.account_data.get_username()
       self.update_table_data()
