@@ -1,5 +1,5 @@
 from src.persistance.authAPI import LogoutAPI
-from src.persistance.vaultAPI import AllDataAPI
+from src.persistance.vaultAPI import VaultAPI
 
 class AppController:
   def __init__(self, view, model):
@@ -9,20 +9,33 @@ class AppController:
     self._bind()
 
   def _bind(self):
-    self.frame.table.bind('<ButtonRelease-1>', self.select_item)
+    # self.frame.table.bind('<ButtonRelease-1>', self.on_select)
+    self.frame.modifybutton.config(command=self.modify_item)
+    self.frame.deletebutton.config(command=self.delete_item)
   
-  def select_item(self,_):
+  def modify_item(self):
     curItem = self.frame.table.focus()
-    item = self.frame.table.item(curItem)
-    self.frame.name.set(item.get("text", "nada"))
-    item_values = item.get('values')
-    self.frame.username.set(item_values[1])
-    self.frame.password.set(item_values[2])
-    self.frame.extra.set(item_values[3])
+    if bool(curItem):
+      item = self.frame.table.item(curItem)
+      self.frame.name.set(item.get("text", "nada"))
+      item_values = item.get('values')
+      self.frame.username.set(item_values[1])
+      self.frame.password.set(item_values[2])
+      self.frame.extra.set(item_values[3])
+
+  def delete_item(self):
+    curItem = self.frame.table.focus()
+    if bool(curItem):
+      item = self.frame.table.item(curItem)
+      item_id = item.get('values')[0]
+      refresh_token = self.model.account_data.get_access_token()
+      vaultAPI = VaultAPI(refresh_token)
+      vaultAPI.delete_item(item_id)
+      self.frame.table.delete(curItem)
 
   def get_user_data(self):
     refresh_token = self.model.account_data.get_access_token()
-    tokenAPI = AllDataAPI(refresh_token)
+    tokenAPI = VaultAPI(refresh_token)
     user_data = tokenAPI.get_user_data()
     self.model.account_data.set_user_data(user_data.get("user_data"))
 
@@ -38,7 +51,7 @@ class AppController:
       self.get_user_data()
       self.frame.welcome["text"] = "Welcome " + self.model.account_data.get_username()
       self.update_table_data()
-      self.view.root.geometry("800x900")
+      self.view.root.geometry("900x900")
       
     else:
       self.frame.welcome["text"] = ""
