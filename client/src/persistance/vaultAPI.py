@@ -28,3 +28,16 @@ class VaultAPI:
       raise Exception("Not a valid item id")
     if x.status_code == 204:# ok
       return 
+    
+  def add_item(self, name, data):
+    data_url = self.base_url + "create-item"
+    headers = {"Authorization": f"Bearer {self.entity}"}
+    json = {
+      "name": name,
+      "data": data
+    }
+    x = requests.post(data_url, headers=headers, json=json ,verify=False)
+    if x.status_code == 401:# not valid token
+      raise Exception("Not a valid token")
+    if x.status_code == 201:# ok
+      return x.json()

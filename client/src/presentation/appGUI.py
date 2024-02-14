@@ -19,7 +19,7 @@ class AppInterface(tk.Frame):
         self.label_name.grid(row=2, column=0, sticky="w", padx=5, pady=5)
 
         self.name = tk.StringVar()
-        self.entry_name = tk.Entry(self, textvariable=self.name)
+        self.entry_name = tk.Entry(self, textvariable=self.name, state="disabled")
         self.entry_name.config(width=50, font=('Arial',  12))
         self.entry_name.grid(row=2, column=1, columnspan=2, sticky="ew", padx=5, pady=5)
 
@@ -28,7 +28,7 @@ class AppInterface(tk.Frame):
         self.label_username.grid(row=3, column=0, sticky="w", padx=5, pady=5)
 
         self.username = tk.StringVar()
-        self.entry_username = tk.Entry(self, textvariable=self.username)
+        self.entry_username = tk.Entry(self, textvariable=self.username, state="disabled")
         self.entry_username.config(width=50, font=('Arial',  12))
         self.entry_username.grid(row=3, column=1, columnspan=2, sticky="ew", padx=5, pady=5)
 
@@ -37,7 +37,7 @@ class AppInterface(tk.Frame):
         self.label_password.grid(row=4, column=0, sticky="w", padx=5, pady=5)
 
         self.password = tk.StringVar()
-        self.entry_password = tk.Entry(self, textvariable=self.password)
+        self.entry_password = tk.Entry(self, textvariable=self.password, state="disabled")
         self.entry_password.config( font=('Arial',  12))
         self.entry_password.grid(row=4, column=1, columnspan=2, sticky="ew", padx=5, pady=5)
 
@@ -46,17 +46,17 @@ class AppInterface(tk.Frame):
         self.label_extra.grid(row=5, column=0, sticky="w", padx=5, pady=5)
 
         self.extra = tk.StringVar()
-        self.entry_extra = tk.Entry(self, textvariable=self.extra)
+        self.entry_extra = tk.Entry(self, textvariable=self.extra, state="disabled")
         self.entry_extra.config(width=50, font=('Arial',  12))
         self.entry_extra.grid(row=5, column=1, columnspan=2, sticky="ew", padx=5, pady=5)
 
         self.add_button = tk.Button(self, text="Add", bg="blue", fg="white", width=30)
         self.add_button.grid(row=6, column=0, sticky="w", padx=5, pady=5)
 
-        self.save_button = tk.Button(self, text="Save", bg="green", fg="white", width=30)
+        self.save_button = tk.Button(self, text="Save", bg="green", fg="white", width=30, state="disabled")
         self.save_button.grid(row=6, column=1, sticky="w", padx=5, pady=5)
 
-        self.cancel_button = tk.Button(self, text="Cancel", bg="red", fg="white", width=30)
+        self.cancel_button = tk.Button(self, text="Cancel", bg="red", fg="white", width=30, state="disabled")
         self.cancel_button.grid(row=6, column=2, sticky="w", padx=5, pady=5)
 
         self.table_frame = ttk.Frame(self)
@@ -68,7 +68,7 @@ class AppInterface(tk.Frame):
         self.horizontalscrollbar.grid(row=1, column=0, sticky='ew')
 
         self.table = ttk.Treeview(self.table_frame, columns=("Id","Username","Password", "Extra"),selectmode='browse', yscrollcommand=self.verticalscrollbar.set, xscrollcommand=self.horizontalscrollbar.set)
-        self.table.grid(row=0, column=0, sticky="nsew")
+        self.table.grid(row=0, column=0,sticky="nsew")
 
         self.verticalscrollbar.config(command=self.table.yview)
         self.horizontalscrollbar.config(command=self.table.xview)

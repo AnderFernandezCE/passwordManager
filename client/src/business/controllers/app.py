@@ -1,37 +1,109 @@
 from src.persistance.authAPI import LogoutAPI
 from src.persistance.vaultAPI import VaultAPI
+from ..validators.vault_item import ItemValidator
+from ..exceptions.validation import FormInvalid
 
 class AppController:
   def __init__(self, view, model):
     self.model = model
     self.view = view
     self.frame = self.view.frames["app"]
+    self.validator = ItemValidator()
     self._bind()
+
+    self.current_item_id = None
+    self.current_action = None
 
   def _bind(self):
     # self.frame.table.bind('<ButtonRelease-1>', self.on_select)
     self.frame.modifybutton.config(command=self.modify_item)
     self.frame.deletebutton.config(command=self.delete_item)
+    self.frame.add_button.config(command=self.add_item)
+    self.frame.cancel_button.config(command=self.cancel_operation)
+    self.frame.save_button.config(command=self.save_operation)
   
+  def disable_buttons(self):
+    self.frame.modifybutton["state"] = "disabled"
+    self.frame.deletebutton["state"] = "disabled"
+    self.frame.add_button["state"] = "disabled"
+
+    self.frame.save_button["state"] = "normal"
+    self.frame.cancel_button["state"] = "normal"
+    self.frame.entry_name["state"] = "normal"
+    self.frame.entry_username["state"] = "normal"
+    self.frame.entry_password["state"] = "normal"
+    self.frame.entry_extra["state"] = "normal"
+
+  def unable_buttons(self):
+    self.frame.modifybutton["state"] = "normal"
+    self.frame.deletebutton["state"] = "normal"
+    self.frame.add_button["state"] = "normal"
+
+    self.frame.save_button["state"] = "disabled"
+    self.frame.cancel_button["state"] = "disabled"
+    self.frame.entry_name["state"] = "disabled"
+    self.frame.entry_username["state"] = "disabled"
+    self.frame.entry_password["state"] = "disabled"
+    self.frame.entry_extra["state"] = "disabled"
+
+  def clear_input(self):
+    self.frame.name.set('')
+    self.frame.username.set('')
+    self.frame.password.set('')
+    self.frame.extra.set('')
+
+  def cancel_operation(self):
+    self.frame.table.selection_remove(self.frame.table.selection())
+    self.clear_input()
+    self.current_item_id = None
+    self.current_action = None
+    self.unable_buttons()
+
   def modify_item(self):
     curItem = self.frame.table.focus()
     if bool(curItem):
+      self.disable_buttons()
       item = self.frame.table.item(curItem)
       self.frame.name.set(item.get("text", "nada"))
       item_values = item.get('values')
+      self.current_action = "modify"
+      self.current_item_id = item_values[0]
       self.frame.username.set(item_values[1])
       self.frame.password.set(item_values[2])
       self.frame.extra.set(item_values[3])
 
   def delete_item(self):
     curItem = self.frame.table.focus()
-    if bool(curItem):
+    if bool(curItem) and self.current_item_id is not None:
       item = self.frame.table.item(curItem)
       item_id = item.get('values')[0]
       refresh_token = self.model.account_data.get_access_token()
-      vaultAPI = VaultAPI(refresh_token)
+      vaultAPI = VaultAPI(refresh_token) #should do try except
       vaultAPI.delete_item(item_id)
       self.frame.table.delete(curItem)
+
+  def add_item(self):
+    self.frame.table.selection_remove(self.frame.table.selection())
+    self.disable_buttons()
+    self.current_action = "add"
+
+  def save_operation(self):
+    refresh_token = self.model.account_data.get_access_token()
+    vaultAPI = VaultAPI(refresh_token) #should do try except
+    if self.current_action == "add":
+      name = self.frame.name.get()
+      username = self.frame.name.get()
+      password = self.frame.name.get()
+      extra = self.frame.name.get()
+      try:
+        self.validator.validate(name, username, password, extra)
+        print()
+      except FormInvalid as e:
+        print(e)
+      # response = vaultAPI.add_item()
+      # self.model.account_data.add_item()
+    elif self.current_action == "modify":
+      print()
 
   def get_user_data(self):
     refresh_token = self.model.account_data.get_access_token()
