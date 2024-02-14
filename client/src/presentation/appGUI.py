@@ -78,7 +78,7 @@ class AppInterface(tk.Frame):
         self.table.heading("Password", text='PASSWORD')
         self.table.heading("Extra", text='EXTRA')
 
-        self.table["displaycolumns"] = ['Username', 'Password']
+        self.table["displaycolumns"] = ['Username', 'Password', 'Extra']
 
         self.modifybutton = tk.Button(self, text="Modify", bg="green", fg="white", width=30)
         self.modifybutton.grid(row=8, column=0, sticky="w", padx=5, pady=5)

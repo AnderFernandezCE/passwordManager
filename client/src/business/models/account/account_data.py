@@ -36,6 +36,14 @@ class AccountData:
   def get_user_data(self):
     return self.data
   
+  def add_item(self,item_id,item_content):
+    self.data[item_id] = item_content
+
+  def update_item(self,item_id,item_content):
+    if item_id not in self.data:
+      raise Exception("item not found")
+    self.data[item_id] = item_content
+  
   def refresh_access_token(self):
     if not self.scheduler_thread or not self.scheduler_thread.is_alive():
       self.scheduler_thread = threading.Thread(target=self.scheduler.run, daemon=True)

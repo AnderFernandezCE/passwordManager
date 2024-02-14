@@ -74,7 +74,7 @@ class AppController:
 
   def delete_item(self):
     curItem = self.frame.table.focus()
-    if bool(curItem) and self.current_item_id is not None:
+    if bool(curItem):# and self.current_item_id is not None:
       item = self.frame.table.item(curItem)
       item_id = item.get('values')[0]
       refresh_token = self.model.account_data.get_access_token()
@@ -88,22 +88,32 @@ class AppController:
     self.current_action = "add"
 
   def save_operation(self):
+    name = self.frame.name.get()
+    username = self.frame.username.get()
+    password = self.frame.password.get()
+    extra = self.frame.extra.get()
+    print(extra)
+    try:
+      self.validator.validate(name, username, password, extra)
+    except FormInvalid as e:
+      print(e)
+      return
+    item_name = name # encrypt
+    item_data = "|".join([username,password,extra])
     refresh_token = self.model.account_data.get_access_token()
     vaultAPI = VaultAPI(refresh_token) #should do try except
     if self.current_action == "add":
-      name = self.frame.name.get()
-      username = self.frame.name.get()
-      password = self.frame.name.get()
-      extra = self.frame.name.get()
-      try:
-        self.validator.validate(name, username, password, extra)
-        print()
-      except FormInvalid as e:
-        print(e)
-      # response = vaultAPI.add_item()
-      # self.model.account_data.add_item()
+      response = vaultAPI.add_item(item_name, item_data)
+      item_id = response.get('id')
+      self.model.account_data.add_item(item_id, response)
+      self.frame.table.insert('','end', text=name, values=(item_id,username, password, extra))
+      self.cancel_operation()
     elif self.current_action == "modify":
-      print()
+      response = vaultAPI.modify_item(self.current_item_id, item_name, item_data)
+      self.model.account_data.update_item(self.current_item_id, response)
+      selected_item = self.frame.table.selection()[0]
+      self.frame.table.item(selected_item, text=item_name, values=(self.current_item_id,username,password,extra))
+      self.cancel_operation()
 
   def get_user_data(self):
     refresh_token = self.model.account_data.get_access_token()
@@ -113,10 +123,14 @@ class AppController:
 
   def update_table_data(self):
     user_data = self.model.account_data.get_user_data()
-    email = self.model.account_data.get_email()
     for count, value in enumerate(user_data):
+      name = user_data[value]["name"]
+      data = user_data[value]["data"].split("|")
+      username = data[0]
+      password = data[1]
+      extra = data[2]
       # decipher data and insert into table
-      self.frame.table.insert('',count, text=user_data[value]["name"], values=(value,email, user_data[value]["data"], "extra"))
+      self.frame.table.insert('',count, text=name, values=(value,username, password, extra))
 
   def update_view(self):
     if self.model.account_data:
@@ -127,6 +141,7 @@ class AppController:
       
     else:
       self.frame.welcome["text"] = ""
+      self.frame.table.delete(*self.frame.table.get_children())
 
   def bind_logout(self):
     self.frame.logoutbutton.config(command = self.logout)

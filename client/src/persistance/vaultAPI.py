@@ -41,3 +41,19 @@ class VaultAPI:
       raise Exception("Not a valid token")
     if x.status_code == 201:# ok
       return x.json()
+    
+  def modify_item(self,id, name, data):
+    data_url = self.base_url + "update-item"
+    headers = {"Authorization": f"Bearer {self.entity}"}
+    json = {
+      "id": id,
+      "name": name,
+      "data": data
+    }
+    x = requests.put(data_url, headers=headers, json=json ,verify=False)
+    if x.status_code == 401:# not valid token
+      raise Exception("Not a valid token")
+    if x.status_code == 404:# item not found
+      raise Exception("Item id not found")
+    if x.status_code == 200:# ok
+      return x.json()
