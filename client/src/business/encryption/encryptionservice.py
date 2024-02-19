@@ -19,3 +19,11 @@ def generate_protected_sym_key(master_key:bytes):
   utf8_iv = lowencryption.bin_to_b64(iv).decode('UTF-8')
   utf8_protected_key = lowencryption.bin_to_b64(protected_key).decode('UTF-8')
   return utf8_protected_key + "|" + utf8_iv
+
+def decypher_protected_sym_key(protected_key:str, master_key:bytes):
+  key, iv = lowencryption.get_protected_key_data(protected_key) 
+  key_bytes = lowencryption.b64_to_bin(key.encode('UTF-8'))
+  iv_bytes = lowencryption.b64_to_bin(iv.encode('UTF-8'))
+  fsymkey = lowencryption.aes_decryption(key_bytes, iv_bytes,master_key)
+  return fsymkey[:32] #fsymkey is compound of symkey + symkeymac
+  

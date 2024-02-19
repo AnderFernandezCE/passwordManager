@@ -4,12 +4,13 @@ import threading
 from src.persistance.authAPI import  TokenAPI
 
 class AccountData:
-  def __init__(self, username, uuid, email, refresh_token, protected_key):
+  def __init__(self, username, uuid, email, refresh_token, protected_key, master_key):
     self.email = email
     self.username = username
     self.uuid = uuid
     self.protected_key = protected_key
     self.refresh_token = refresh_token
+    self.master_key = master_key
     self.access_token = None
     self.data = {}
     self.scheduler = sched.scheduler(time.time, time.sleep)
@@ -43,6 +44,12 @@ class AccountData:
     if item_id not in self.data:
       raise Exception("item not found")
     self.data[item_id] = item_content
+
+  def get_protected_key(self):
+    return self.protected_key
+  
+  def get_master_key(self):
+    return self.master_key
   
   def refresh_access_token(self):
     if not self.scheduler_thread or not self.scheduler_thread.is_alive():

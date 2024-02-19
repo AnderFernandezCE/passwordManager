@@ -29,7 +29,7 @@ class LoginController:
     password = self.frame.passwordentry.get()
     try:
       self.validator.validate(email, password)
-      hmp,_ = encryptionservice.obtain_hash_master_password_and_master_key(password,email)
+      hmp,mk = encryptionservice.obtain_hash_master_password_and_master_key(password,email)
       user = LoginModel(email,hmp)
       loginservice = LoginAPI(user.to_dict())
       response = loginservice.login()
@@ -40,6 +40,7 @@ class LoginController:
         response.get("email"),
         response.get("refresh_token"),
         response.get("protectedkey"),
+        mk
       )
       self.model.login(account_data)
     except FormInvalid as e:

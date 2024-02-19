@@ -33,6 +33,11 @@ def generate_symmetric_key():
   smac = h.finalize()
   return skey + smac
 
+def get_protected_key_data(protected_key:str):
+  protected_key_data = protected_key.split("|")
+  key = protected_key_data[0]
+  iv = protected_key_data[1]
+  return key,iv
 
 def aes_encryption(payload:bytes, iv:bytes, key:bytes):
   cipher = Cipher(algorithms.AES(key), modes.CBC(iv))

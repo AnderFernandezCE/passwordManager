@@ -2,6 +2,7 @@ from src.persistance.authAPI import LogoutAPI
 from src.persistance.vaultAPI import VaultAPI
 from ..validators.vault_item import ItemValidator
 from ..exceptions.validation import FormInvalid
+from ..encryption import encryptionservice
 
 class AppController:
   def __init__(self, view, model):
@@ -116,12 +117,18 @@ class AppController:
       self.cancel_operation()
 
   def get_user_data(self):
-    refresh_token = self.model.account_data.get_access_token()
-    tokenAPI = VaultAPI(refresh_token)
+    access_token = self.model.account_data.get_access_token()
+    tokenAPI = VaultAPI(access_token)
     user_data = tokenAPI.get_user_data()
     self.model.account_data.set_user_data(user_data.get("user_data"))
 
   def update_table_data(self):
+    protected_key = self.model.account_data.get_protected_key()
+    master_key = self.model.account_data.get_master_key()
+    sym_key = encryptionservice.decypher_protected_sym_key(protected_key, master_key)
+    del protected_key
+    del master_key
+    print(sym_key)
     user_data = self.model.account_data.get_user_data()
     for count, value in enumerate(user_data):
       name = user_data[value]["name"]
