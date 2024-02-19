@@ -101,7 +101,6 @@ class AppController:
       return
     symkey = self.get_sym_key()
     item_name, item_data = encryptionservice.vault_encrypt(symkey, name, username, password, extra) # encrypt
-    # item_data = "|".join([username,password,extra])
     access_token = self.model.account_data.get_access_token()
     vaultAPI = VaultAPI(access_token) #should do try except
     if self.current_action == "add":
@@ -114,7 +113,7 @@ class AppController:
       response = vaultAPI.modify_item(self.current_item_id, item_name, item_data)
       self.model.account_data.update_item(self.current_item_id, response)
       selected_item = self.frame.table.selection()[0]
-      self.frame.table.item(selected_item, text=item_name, values=(self.current_item_id,username,password,extra))
+      self.frame.table.item(selected_item, text=name, values=(self.current_item_id,username,password,extra))
       self.cancel_operation()
 
   def get_user_data(self):
