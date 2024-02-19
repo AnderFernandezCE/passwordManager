@@ -73,11 +73,11 @@ def decrypt_vault_item_data(symkey:bytes, data:str):
   
   item_data_decrypted = []
   for i in [username, password, extra]:
-    padder = padding.PKCS7(128).padder()
-    i_bytes = i.encode('UTF-8')
-    padded_data = padder.update(i_bytes) + padder.finalize()
-    decrypted_value = bin_to_b64(aes_decryption(padded_data, iv_bytes, symkey)).decode('UTF-8')
-    item_data_decrypted.append(decrypted_value)
+    i_bytes = b64_to_bin(i.encode('UTF-8'))
+    decrypted_value = aes_decryption(i_bytes, iv_bytes, symkey)
+    padder = padding.PKCS7(128).unpadder()
+    padded_data = padder.update(decrypted_value) + padder.finalize()
+    item_data_decrypted.append(padded_data.decode('UTF-8'))
   
   username, password, extra = item_data_decrypted[:3]
   return username, password, extra
