@@ -99,10 +99,11 @@ class AppController:
     except FormInvalid as e:
       print(e)
       return
-    item_name = name # encrypt
-    item_data = "|".join([username,password,extra])
-    refresh_token = self.model.account_data.get_access_token()
-    vaultAPI = VaultAPI(refresh_token) #should do try except
+    symkey = self.get_sym_key()
+    item_name, item_data = encryptionservice.vault_encrypt(symkey, name, username, password, extra) # encrypt
+    # item_data = "|".join([username,password,extra])
+    access_token = self.model.account_data.get_access_token()
+    vaultAPI = VaultAPI(access_token) #should do try except
     if self.current_action == "add":
       response = vaultAPI.add_item(item_name, item_data)
       item_id = response.get('id')
@@ -122,21 +123,22 @@ class AppController:
     user_data = tokenAPI.get_user_data()
     self.model.account_data.set_user_data(user_data.get("user_data"))
 
-  def update_table_data(self):
+  def get_sym_key(self):
     protected_key = self.model.account_data.get_protected_key()
     master_key = self.model.account_data.get_master_key()
     sym_key = encryptionservice.decypher_protected_sym_key(protected_key, master_key)
     del protected_key
     del master_key
-    print(sym_key)
+    return sym_key
+
+  def update_table_data(self):
+    sym_key =self.get_sym_key()
     user_data = self.model.account_data.get_user_data()
     for count, value in enumerate(user_data):
       name = user_data[value]["name"]
-      data = user_data[value]["data"].split("|")
-      username = data[0]
-      password = data[1]
-      extra = data[2]
+      data = user_data[value]["data"]
       # decipher data and insert into table
+      name, username, password, extra = encryptionservice.vault_decrypt(sym_key, name, data)
       self.frame.table.insert('',count, text=name, values=(value,username, password, extra))
 
   def update_view(self):
